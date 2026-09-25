@@ -1,0 +1,93 @@
+<a [routerLink]="['/inscripciones']" class="back-link">&larr; Volver al listado</a>
+
+<h2>Nueva inscripción</h2>
+
+<app-loading-state *ngIf="loadingData()" message="Cargando datos..."></app-loading-state>
+
+<app-error-state *ngIf="loadError()" [message]="loadError()" (retry)="ngOnInit()"></app-error-state>
+
+<form
+  *ngIf="!loadingData() && !loadError()"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+>
+  <div class="field">
+    <label for="alumnoId">Alumno *</label>
+    <select id="alumnoId" formControlName="alumnoId">
+      <option [ngValue]="null" disabled>Seleccione un alumno</option>
+      <option *ngFor="let alumno of alumnos()" [ngValue]="alumno.id">
+        {{ alumno.apellido }}, {{ alumno.nombre }} - DNI: {{ alumno.dni }}
+      </option>
+    </select>
+    <small
+      class="error"
+      *ngIf="form.controls.alumnoId.touched && form.controls.alumnoId.hasError('required')"
+    >
+      El alumno es obligatorio.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="cursoId">Curso *</label>
+    <select id="cursoId" formControlName="cursoId">
+      <option [ngValue]="null" disabled>Seleccione un curso</option>
+      <option *ngFor="let curso of cursos()" [ngValue]="curso.id">
+        {{ curso.nombre }} - Mensual: {{ curso.precioMensual | formatMoneda }}
+      </option>
+    </select>
+    <small
+      class="error"
+      *ngIf="form.controls.cursoId.touched && form.controls.cursoId.hasError('required')"
+    >
+      El curso es obligatorio.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="anio">Año *</label>
+    <input
+      id="anio"
+      type="number"
+      formControlName="anio"
+      min="2000"
+      max="2100"
+    >
+    <small
+      class="error"
+      *ngIf="form.controls.anio.touched && form.controls.anio.hasError('required')"
+    >
+      El año es obligatorio.
+    </small>
+    <small
+      class="error"
+      *ngIf="form.controls.anio.touched && (form.controls.anio.hasError('min') || form.controls.anio.hasError('max'))"
+    >
+      Ingrese un año entre 2000 y 2100.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="descuentoPorcentaje">Descuento (%)</label>
+    <input
+      id="descuentoPorcentaje"
+      type="number"
+      formControlName="descuentoPorcentaje"
+      min="0"
+      max="100"
+    >
+    <small
+      class="error"
+      *ngIf="form.controls.descuentoPorcentaje.touched && (form.controls.descuentoPorcentaje.hasError('min') || form.controls.descuentoPorcentaje.hasError('max'))"
+    >
+      El descuento debe estar entre 0 y 100.
+    </small>
+  </div>
+
+  <app-error-state *ngIf="submitError()" [message]="submitError()" (retry)="onSubmit()"></app-error-state>
+
+  <p class="success" *ngIf="successMessage()">{{ successMessage() }}</p>
+
+  <button type="submit" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Creando...' : 'Crear inscripción' }}
+  </button>
+</form>

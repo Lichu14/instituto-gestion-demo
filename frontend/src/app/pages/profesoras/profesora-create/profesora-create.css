@@ -1,0 +1,12 @@
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.success {
+  color: #1b7f3b;
+}
+
+button {
+  padding: 0.5rem 1rem;
+}

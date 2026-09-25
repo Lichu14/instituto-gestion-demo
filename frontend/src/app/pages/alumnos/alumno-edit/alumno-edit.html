@@ -1,0 +1,94 @@
+<a [routerLink]="['/alumnos', alumnoId]" class="back-link">&larr; Volver al detalle</a>
+
+<h2>Editar alumno</h2>
+
+<app-loading-state *ngIf="loading()" message="Cargando alumno..."></app-loading-state>
+
+<app-error-state *ngIf="loadError()" [message]="loadError()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !loadError()">
+  <h3>{{ nombreCompleto() }}</h3>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label for="dni">DNI *</label>
+      <input id="dni" type="text" formControlName="dni" placeholder="30123456">
+      <small
+        class="error"
+        *ngIf="form.controls.dni.touched && form.controls.dni.hasError('required')"
+      >
+        El DNI es obligatorio.
+      </small>
+      <small
+        class="error"
+        *ngIf="form.controls.dni.touched && form.controls.dni.hasError('pattern')"
+      >
+        El DNI debe tener 7 u 8 dígitos.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="fechaNacimiento">Fecha de nacimiento *</label>
+      <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento">
+      <small
+        class="error"
+        *ngIf="form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.hasError('required')"
+      >
+        La fecha de nacimiento es obligatoria.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="telefono">Teléfono *</label>
+      <input id="telefono" type="text" formControlName="telefono" placeholder="1123456789">
+      <small
+        class="error"
+        *ngIf="form.controls.telefono.touched && form.controls.telefono.hasError('required')"
+      >
+        El teléfono es obligatorio.
+      </small>
+      <small
+        class="error"
+        *ngIf="form.controls.telefono.touched && form.controls.telefono.hasError('pattern')"
+      >
+        El teléfono debe tener entre 6 y 15 dígitos.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email">
+      <small
+        class="error"
+        *ngIf="form.controls.email.touched && form.controls.email.hasError('email')"
+      >
+        Ingrese un email válido.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="estado">Estado *</label>
+      <select id="estado" formControlName="estado">
+        <option value="ACTIVO">ACTIVO</option>
+        <option value="ARCHIVADO">ARCHIVADO</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="fechaAlta">Fecha de alta *</label>
+      <input id="fechaAlta" type="date" formControlName="fechaAlta">
+      <small
+        class="error"
+        *ngIf="form.controls.fechaAlta.touched && form.controls.fechaAlta.hasError('required')"
+      >
+        La fecha de alta es obligatoria.
+      </small>
+    </div>
+
+    <app-error-state *ngIf="submitError()" [message]="submitError()" (retry)="onSubmit()"></app-error-state>
+
+    <button type="submit" [disabled]="form.invalid || submitting()">
+      {{ submitting() ? 'Guardando...' : 'Guardar cambios' }}
+    </button>
+  </form>
+</ng-container>

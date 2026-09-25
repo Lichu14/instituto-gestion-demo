@@ -1,0 +1,94 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f4f6;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+input {
+  padding: 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+button {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-radius: var(--radius-md);
+  padding: .75rem .85rem;
+  font-size: 0.9rem;
+  margin: 1rem 0 0;
+}
+
+.login-container { padding: 24px 16px; box-sizing: border-box; background: var(--color-bg, #f5f3ef); }
+.login-card { box-sizing: border-box; max-width: 440px; }
+.demo-label { display: block; text-align: center; font-size: .7rem; letter-spacing: .16em; color: #766448; font-weight: 700; margin-bottom: 12px; }
+h2 { margin-bottom: 14px; font-size: 1rem; }
+.demo-intro { color: #647067; line-height: 1.6; text-align: center; font-size: .88rem; margin: 0 0 24px; }
+.demo-access { background: #f4f5f2; border-radius: 10px; padding: 14px; line-height: 1.8; color: #46534a; font-size: .8rem; margin-top: 20px; text-align: center; overflow-wrap: anywhere; }
+.demo-note { text-align: center; font-size: .73rem; line-height: 1.5; color: #6b7280; margin-bottom: 0; }
+button { background: #526b5b; }
+button:hover { background: #405648; }
+@media (max-width: 480px) { .login-card { padding: 24px; } }

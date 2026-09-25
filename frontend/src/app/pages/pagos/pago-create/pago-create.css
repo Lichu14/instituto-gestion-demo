@@ -1,0 +1,29 @@
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+form,
+.selection-form {
+  max-width: 26rem;
+}
+
+.selection-form {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd {
+  margin: 0;
+}

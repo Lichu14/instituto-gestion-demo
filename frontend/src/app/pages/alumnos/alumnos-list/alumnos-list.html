@@ -1,0 +1,71 @@
+<div class="page-header">
+  <h2>Alumnos</h2>
+  <a [routerLink]="['/alumnos', 'nueva']" class="new-link">+ Nuevo alumno</a>
+</div>
+
+<app-loading-state *ngIf="loading()" message="Cargando alumnos..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !error()">
+  <ng-container *ngIf="alumnos().length > 0">
+    <div class="list-toolbar">
+      <input
+        type="search"
+        class="search-input"
+        placeholder="Buscar alumno..."
+        aria-label="Buscar alumno"
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+      >
+
+      <label class="filter-check">
+        <input
+          type="checkbox"
+          [checked]="showArchived()"
+          (change)="onToggleArchived($event)"
+        >
+        Mostrar alumnos archivados
+      </label>
+    </div>
+
+    <p class="state-message" *ngIf="filteredAlumnos().length === 0">
+      Ningún alumno coincide con tu búsqueda.
+    </p>
+  </ng-container>
+
+  <p class="state-message" *ngIf="alumnos().length === 0">No hay alumnos registrados.</p>
+
+  <ul class="students-list" aria-label="Listado de alumnos">
+    <li class="student-card" *ngFor="let alumno of filteredAlumnos()">
+      <div class="student-info">
+        <div class="student-heading">
+          <h3>{{ alumno.nombre }} {{ alumno.apellido }}</h3>
+          <span *ngIf="alumno.estado === 'ARCHIVADO'" class="badge estado-ARCHIVADO">Archivado</span>
+        </div>
+        <p class="student-document"><span>DNI</span> {{ alumno.dni }}</p>
+      </div>
+      <div class="student-actions">
+        <a [routerLink]="['/alumnos', alumno.id]">Ver detalle</a>
+        <a [routerLink]="['/alumnos', alumno.id, 'editar']">Editar</a>
+        <button
+          type="button"
+          class="link-button"
+          [disabled]="updatingId() === alumno.id"
+          (click)="toggleEstado(alumno)"
+        >
+          {{ alumno.estado === 'ACTIVO' ? 'Archivar' : 'Activar' }}
+        </button>
+      </div>
+    </li>
+  </ul>
+</ng-container>
+
+<app-confirm-dialog
+  *ngIf="alumnoAArchivar() as alumno"
+  title="Archivar alumno"
+  [message]="'¿Querés archivar a ' + alumno.nombre + ' ' + alumno.apellido + '? Dejará de aparecer en los listados activos.'"
+  confirmLabel="Archivar"
+  (confirmed)="confirmarArchivado()"
+  (cancelled)="cancelarArchivado()"
+></app-confirm-dialog>

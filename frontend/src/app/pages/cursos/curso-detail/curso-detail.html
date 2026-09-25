@@ -1,0 +1,267 @@
+<a [routerLink]="['/cursos']" class="back-link">&larr; Volver al listado</a>
+
+<app-loading-state *ngIf="loading()" message="Cargando curso..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !error()">
+  <ng-container *ngIf="curso() as c; else noCurso">
+    <h2>{{ c.nombre }}</h2>
+
+    <dl>
+      <dt>Precio mensual</dt>
+      <dd>{{ c.precioMensual | formatMoneda }}</dd>
+
+      <dt>Precio matrícula</dt>
+      <dd>{{ c.precioMatricula | formatMoneda }}</dd>
+
+      <dt>Estado</dt>
+      <dd><span class="badge estado-{{ c.estado }}">{{ c.estado }}</span></dd>
+
+      <dt>Profesora</dt>
+      <dd>
+        {{ c.profesora.nombre }} {{ c.profesora.apellido }}
+        <a [routerLink]="['/profesoras', c.profesora.id]">Ver profesora</a>
+      </dd>
+
+      <dt>Horarios</dt>
+      <dd>{{ horariosResumen() }}</dd>
+
+      <dt>Alumnos inscriptos</dt>
+      <dd>{{ cantidadAlumnosInscriptos() }}</dd>
+    </dl>
+
+    <button type="button" *ngIf="!editandoCurso()" (click)="startEditCurso()">
+      Editar curso
+    </button>
+
+    <section *ngIf="editandoCurso()">
+      <h3>Editar curso</h3>
+
+      <form [formGroup]="cursoForm" (ngSubmit)="onSubmitCurso()">
+        <div class="field">
+          <label for="precioMensual">Precio mensual *</label>
+          <input id="precioMensual" type="number" formControlName="precioMensual">
+          <small
+            class="error"
+            *ngIf="cursoForm.controls.precioMensual.touched && cursoForm.controls.precioMensual.hasError('required')"
+          >
+            El precio mensual es obligatorio.
+          </small>
+          <small
+            class="error"
+            *ngIf="cursoForm.controls.precioMensual.touched && cursoForm.controls.precioMensual.hasError('min')"
+          >
+            El precio mensual debe ser mayor a 0.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="precioMatricula">Precio matrícula *</label>
+          <input id="precioMatricula" type="number" formControlName="precioMatricula">
+          <small
+            class="error"
+            *ngIf="cursoForm.controls.precioMatricula.touched && cursoForm.controls.precioMatricula.hasError('required')"
+          >
+            El precio de matrícula es obligatorio.
+          </small>
+          <small
+            class="error"
+            *ngIf="cursoForm.controls.precioMatricula.touched && cursoForm.controls.precioMatricula.hasError('min')"
+          >
+            El precio de matrícula debe ser mayor a 0.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="profesoraId">Profesora *</label>
+          <select id="profesoraId" formControlName="profesoraId">
+            <option [ngValue]="null" disabled>Seleccione una profesora</option>
+            <option *ngFor="let profesora of profesoras()" [ngValue]="profesora.id">
+              {{ profesora.nombre }} {{ profesora.apellido }}
+            </option>
+          </select>
+          <small
+            class="error"
+            *ngIf="cursoForm.controls.profesoraId.touched && cursoForm.controls.profesoraId.hasError('required')"
+          >
+            Debe seleccionar una profesora.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="estado">Estado *</label>
+          <select id="estado" formControlName="estado">
+            <option value="ACTIVO">ACTIVO</option>
+            <option value="ARCHIVADO">ARCHIVADO</option>
+          </select>
+        </div>
+
+        <app-error-state *ngIf="cursoError()" [message]="cursoError()" (retry)="onSubmitCurso()"></app-error-state>
+
+        <p class="success" *ngIf="cursoSuccess()">{{ cursoSuccess() }}</p>
+
+        <button type="submit" [disabled]="cursoForm.invalid || cursoSubmitting()">
+          {{ cursoSubmitting() ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+        <button type="button" (click)="cancelEditCurso()" [disabled]="cursoSubmitting()">
+          Cancelar
+        </button>
+      </form>
+    </section>
+
+    <section>
+      <h3>Horarios</h3>
+
+      <p *ngIf="c.horarios.length === 0">No hay horarios registrados.</p>
+
+      <ul>
+        <li *ngFor="let horario of c.horarios">
+          {{ horario.diaSemana }}: {{ horario.horaInicio }} - {{ horario.horaFin }}
+          <button
+            type="button"
+            (click)="startEditHorario(horario)"
+            [disabled]="horarioDeletingId() !== null"
+          >
+            Editar
+          </button>
+          <button
+            type="button"
+            (click)="onDeleteHorario(horario)"
+            [disabled]="horarioDeletingId() !== null"
+          >
+            {{ horarioDeletingId() === horario.id ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        </li>
+      </ul>
+
+      <h4>{{ horarioEditandoId() === null ? 'Agregar horario' : 'Editar horario' }}</h4>
+
+      <button
+        type="button"
+        *ngIf="!mostrarFormularioHorario()"
+        (click)="showAddHorarioForm()"
+      >
+        Agregar horario
+      </button>
+
+      <div class="horario-form-wrapper" *ngIf="mostrarFormularioHorario()">
+        <button
+          type="button"
+          class="close-button"
+          (click)="cancelEditHorario()"
+          [disabled]="horarioSubmitting()"
+          aria-label="Cerrar"
+        >
+          &times;
+        </button>
+
+        <form [formGroup]="horarioForm" (ngSubmit)="onSubmitHorario()">
+        <div class="field">
+          <label for="diaSemana">Día *</label>
+          <select id="diaSemana" formControlName="diaSemana">
+            <option [ngValue]="null" disabled>Seleccione un día</option>
+            <option *ngFor="let dia of diasSemana" [ngValue]="dia">
+              {{ dia }}
+            </option>
+          </select>
+          <small
+            class="error"
+            *ngIf="horarioForm.controls.diaSemana.touched && horarioForm.controls.diaSemana.hasError('required')"
+          >
+            El día es obligatorio.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="horaInicio">Hora de inicio *</label>
+          <input id="horaInicio" type="time" formControlName="horaInicio">
+          <small
+            class="error"
+            *ngIf="horarioForm.controls.horaInicio.touched && horarioForm.controls.horaInicio.hasError('required')"
+          >
+            La hora de inicio es obligatoria.
+          </small>
+          <small
+            class="error"
+            *ngIf="horarioForm.controls.horaInicio.touched && horarioForm.controls.horaInicio.hasError('pattern')"
+          >
+            Formato válido: HH:mm.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="horaFin">Hora de fin *</label>
+          <input id="horaFin" type="time" formControlName="horaFin">
+          <small
+            class="error"
+            *ngIf="horarioForm.controls.horaFin.touched && horarioForm.controls.horaFin.hasError('required')"
+          >
+            La hora de fin es obligatoria.
+          </small>
+          <small
+            class="error"
+            *ngIf="horarioForm.controls.horaFin.touched && horarioForm.controls.horaFin.hasError('pattern')"
+          >
+            Formato válido: HH:mm.
+          </small>
+        </div>
+
+        <p class="error" *ngIf="horarioError()">{{ horarioError() }}</p>
+
+        <p class="success" *ngIf="horarioSuccess()">{{ horarioSuccess() }}</p>
+
+        <button type="submit" [disabled]="horarioForm.invalid || horarioSubmitting()">
+          {{ horarioSubmitting()
+            ? 'Guardando...'
+            : (horarioEditandoId() === null ? 'Agregar horario' : 'Guardar cambios') }}
+        </button>
+        </form>
+      </div>
+    </section>
+
+    <section>
+      <h3>Alumnos inscriptos ({{ cantidadAlumnosInscriptos() }})</h3>
+
+      <app-loading-state *ngIf="loadingInscripciones()" message="Cargando alumnos..."></app-loading-state>
+
+      <p *ngIf="!loadingInscripciones() && alumnosInscriptos().length === 0">
+        No hay alumnos inscriptos en este curso.
+      </p>
+
+      <ul *ngIf="!loadingInscripciones() && alumnosInscriptos().length > 0">
+        <li *ngFor="let inscripcion of alumnosInscriptos()" class="alumno-inscripto">
+          <a [routerLink]="['/alumnos', inscripcion.alumno.id]">
+            <strong>{{ inscripcion.alumno.apellido }}, {{ inscripcion.alumno.nombre }}</strong>
+          </a>
+          <span class="dni">DNI: {{ inscripcion.alumno.dni }}</span>
+          <span class="estado estado-{{ inscripcion.estado }}">{{ inscripcion.estado }}</span>
+        </li>
+      </ul>
+    </section>
+  </ng-container>
+
+  <ng-template #noCurso>
+    <p>El curso solicitado no existe.</p>
+  </ng-template>
+</ng-container>
+
+
+<app-confirm-dialog
+  *ngIf="cursoArchivadoPendiente()"
+  title="Archivar curso"
+  message="¿Querés archivar este curso? Dejará de estar disponible como curso activo."
+  confirmLabel="Archivar"
+  (confirmed)="confirmarArchivadoCurso()"
+  (cancelled)="cancelarArchivadoCurso()"
+></app-confirm-dialog>
+
+<app-confirm-dialog
+  *ngIf="horarioAEliminar() as horario"
+  title="Eliminar horario"
+  [message]="'¿Querés eliminar el horario ' + horario.diaSemana + ' ' + horario.horaInicio + ' - ' + horario.horaFin + '? Esta acción no se puede deshacer.'"
+  confirmLabel="Eliminar"
+  (confirmed)="confirmarEliminarHorario()"
+  (cancelled)="cancelarEliminarHorario()"
+></app-confirm-dialog>
+

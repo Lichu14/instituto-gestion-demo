@@ -1,0 +1,32 @@
+<a [routerLink]="['/profesoras']" class="back-link">&larr; Volver al listado</a>
+
+<app-loading-state *ngIf="loading()" message="Cargando profesora..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !error()">
+  <ng-container *ngIf="profesora() as p; else noProfesora">
+    <h2>{{ p.nombre }} {{ p.apellido }}</h2>
+
+    <dl>
+      <dt>DNI</dt>
+      <dd>{{ p.dni }}</dd>
+
+      <dt>Teléfono</dt>
+      <dd>{{ p.telefono }}</dd>
+
+      <dt>Email</dt>
+      <dd>{{ p.email || '-' }}</dd>
+
+      <dt>Fecha de ingreso</dt>
+      <dd>{{ p.fechaIngreso | formatFecha }}</dd>
+
+      <dt>Estado</dt>
+      <dd><span class="badge estado-{{ p.estado }}">{{ p.estado }}</span></dd>
+    </dl>
+  </ng-container>
+
+  <ng-template #noProfesora>
+    <p>La profesora solicitada no existe.</p>
+  </ng-template>
+</ng-container>

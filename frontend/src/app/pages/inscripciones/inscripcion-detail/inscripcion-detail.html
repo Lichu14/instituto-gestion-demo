@@ -1,0 +1,122 @@
+<a [routerLink]="['/inscripciones']" class="back-link">&larr; Volver al listado</a>
+
+<app-loading-state *ngIf="loading()" message="Cargando inscripción..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !error()">
+  <ng-container *ngIf="inscripcion() as i; else noInscripcion">
+    <h2>Inscripción #{{ i.id }}</h2>
+
+    <dl>
+      <dt>Año</dt>
+      <dd>{{ i['año'] }}</dd>
+
+      <dt>Fecha de inscripción</dt>
+      <dd>{{ i.fechaInscripcion | formatFecha }}</dd>
+
+      <dt>Estado</dt>
+      <dd><span class="badge estado-{{ i.estado }}">{{ i.estado }}</span></dd>
+
+      <dt>Descuento</dt>
+      <dd>{{ i.descuentoPorcentaje }}%</dd>
+    </dl>
+
+    <div class="acciones-inscripcion" *ngIf="i.estado === 'ACTIVA'">
+      <button type="button" [disabled]="accionSubmitting()" (click)="onAbandonar()">
+        Marcar como abandonada
+      </button>
+      <button type="button" [disabled]="accionSubmitting()" (click)="onCompletar()">
+        Marcar como completada
+      </button>
+    </div>
+
+    <p class="error" *ngIf="accionError()">{{ accionError() }}</p>
+
+    <section>
+      <h3>Alumno</h3>
+
+      <dl>
+        <dt>Nombre</dt>
+        <dd>{{ i.alumno.nombre }} {{ i.alumno.apellido }}</dd>
+
+        <dt>DNI</dt>
+        <dd>{{ i.alumno.dni }}</dd>
+
+        <dt>Teléfono</dt>
+        <dd>{{ i.alumno.telefono }}</dd>
+      </dl>
+
+      <a [routerLink]="['/alumnos', i.alumno.id]">Ver alumno</a>
+    </section>
+
+    <section>
+      <h3>Curso</h3>
+
+      <dl>
+        <dt>Nombre</dt>
+        <dd>{{ i.curso.nombre }}</dd>
+
+        <dt>Precio mensual</dt>
+        <dd>{{ i.curso.precioMensual | formatMoneda }}</dd>
+
+        <dt>Precio matrícula</dt>
+        <dd>{{ i.curso.precioMatricula | formatMoneda }}</dd>
+      </dl>
+
+      <a [routerLink]="['/cursos', i.curso.id]">Ver curso</a>
+    </section>
+
+    <section>
+      <h3>Cuotas</h3>
+
+      <app-loading-state *ngIf="cuotasLoading()" message="Cargando cuotas..." [inline]="true"></app-loading-state>
+
+      <app-error-state *ngIf="cuotasError()" [message]="cuotasError()" (retry)="retryCuotas()"></app-error-state>
+
+      <ng-container *ngIf="!cuotasLoading() && !cuotasError()">
+        <p *ngIf="cuotasOrdenadas().length === 0">No hay cuotas registradas.</p>
+
+        <div class="cuota" *ngFor="let cuota of cuotasOrdenadas()">
+          <dl>
+            <dt>Período</dt>
+            <dd>{{ cuota.periodo }} ({{ cuota.concepto }})</dd>
+
+            <dt>Monto</dt>
+            <dd>{{ cuota.monto | formatMoneda }}</dd>
+
+            <dt>Fecha de vencimiento</dt>
+            <dd>{{ cuota.fechaVencimiento | formatFecha }}</dd>
+
+            <dt>Estado</dt>
+            <dd><span class="badge estado-{{ cuota.estado }}">{{ cuota.estado }}</span></dd>
+          </dl>
+
+          <a [routerLink]="['/cuotas', cuota.id, 'pago']">Registrar pago</a>
+        </div>
+      </ng-container>
+    </section>
+  </ng-container>
+
+  <ng-template #noInscripcion>
+    <p>La inscripción solicitada no existe.</p>
+  </ng-template>
+</ng-container>
+
+<app-confirm-dialog
+  *ngIf="abandonoPendiente()"
+  title="Marcar como abandonada"
+  message="¿Querés marcar esta inscripción como abandonada? Se conserva todo el historial; solo se eliminan las cuotas pendientes de meses futuros que todavía no tengan ningún pago asociado."
+  confirmLabel="Marcar como abandonada"
+  (confirmed)="confirmarAbandono()"
+  (cancelled)="cancelarAbandono()"
+></app-confirm-dialog>
+
+<app-confirm-dialog
+  *ngIf="completarPendiente()"
+  title="Marcar como completada"
+  message="¿Querés marcar esta inscripción como completada? Se conserva íntegro el historial de cuotas y pagos."
+  confirmLabel="Marcar como completada"
+  (confirmed)="confirmarCompletar()"
+  (cancelled)="cancelarCompletar()"
+></app-confirm-dialog>

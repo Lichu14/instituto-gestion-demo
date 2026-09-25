@@ -1,0 +1,37 @@
+<div class="page-header">
+  <h2>Profesoras</h2>
+  <a [routerLink]="['/profesoras', 'nueva']" class="new-link">+ Nueva profesora</a>
+</div>
+
+<app-loading-state *ngIf="loading()" message="Cargando profesoras..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !error()">
+  <p class="state-message" *ngIf="profesoras().length === 0">No hay profesoras registradas.</p>
+
+  <ng-container *ngIf="profesoras().length > 0">
+    <label class="filter-check">
+      <input
+        type="checkbox"
+        [checked]="showInactive()"
+        (change)="onToggleInactive($event)"
+      >
+      Mostrar profesoras inactivas
+    </label>
+
+    <p class="state-message" *ngIf="filteredProfesoras().length === 0">
+      No hay profesoras activas.
+    </p>
+
+    <ul>
+      <li *ngFor="let profesora of filteredProfesoras()">
+        <strong>{{ profesora.nombre }} {{ profesora.apellido }}</strong> -
+        DNI: {{ profesora.dni }} -
+        Tel: {{ profesora.telefono }}
+        <span class="badge estado-{{ profesora.estado }}">{{ profesora.estado }}</span>
+        <a [routerLink]="['/profesoras', profesora.id]">Ver detalle</a>
+      </li>
+    </ul>
+  </ng-container>
+</ng-container>

@@ -1,0 +1,91 @@
+<a [routerLink]="['/profesoras']" class="back-link">&larr; Volver al listado</a>
+
+<h2>Nueva profesora</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="field">
+    <label for="nombre">Nombre *</label>
+    <input id="nombre" type="text" formControlName="nombre">
+    <small
+      class="error"
+      *ngIf="form.controls.nombre.touched && form.controls.nombre.hasError('required')"
+    >
+      El nombre es obligatorio.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="apellido">Apellido *</label>
+    <input id="apellido" type="text" formControlName="apellido">
+    <small
+      class="error"
+      *ngIf="form.controls.apellido.touched && form.controls.apellido.hasError('required')"
+    >
+      El apellido es obligatorio.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="dni">DNI *</label>
+    <input id="dni" type="text" formControlName="dni" placeholder="30123456">
+    <small
+      class="error"
+      *ngIf="form.controls.dni.touched && form.controls.dni.hasError('required')"
+    >
+      El DNI es obligatorio.
+    </small>
+    <small
+      class="error"
+      *ngIf="form.controls.dni.touched && form.controls.dni.hasError('pattern')"
+    >
+      El DNI debe tener 7 u 8 dígitos.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="telefono">Teléfono *</label>
+    <input id="telefono" type="text" formControlName="telefono" placeholder="1123456789">
+    <small
+      class="error"
+      *ngIf="form.controls.telefono.touched && form.controls.telefono.hasError('required')"
+    >
+      El teléfono es obligatorio.
+    </small>
+    <small
+      class="error"
+      *ngIf="form.controls.telefono.touched && form.controls.telefono.hasError('pattern')"
+    >
+      El teléfono debe tener entre 6 y 15 dígitos.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="email">
+    <small
+      class="error"
+      *ngIf="form.controls.email.touched && form.controls.email.hasError('email')"
+    >
+      Ingrese un email válido.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="fechaIngreso">Fecha de ingreso *</label>
+    <input id="fechaIngreso" type="date" formControlName="fechaIngreso">
+    <small
+      class="error"
+      *ngIf="form.controls.fechaIngreso.touched && form.controls.fechaIngreso.hasError('required')"
+    >
+      La fecha de ingreso es obligatoria.
+    </small>
+  </div>
+
+  <app-error-state *ngIf="submitError()" [message]="submitError()" (retry)="onSubmit()"></app-error-state>
+
+  <p class="success" *ngIf="successMessage()">{{ successMessage() }}</p>
+
+  <button type="submit" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Creando...' : 'Crear profesora' }}
+  </button>
+</form>

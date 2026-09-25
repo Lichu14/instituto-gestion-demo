@@ -1,0 +1,252 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EstadoAlumno {
+  ACTIVO
+  ARCHIVADO
+}
+
+enum TipoCuota {
+  MATRICULA
+  MENSUALIDAD
+}
+
+enum EstadoCuota {
+  PENDIENTE
+  PAGO_PARCIAL
+  PAGADA
+  VENCIDA
+  ANULADA
+}
+
+enum MedioPago {
+  EFECTIVO
+  TRANSFERENCIA
+}
+
+enum EstadoPago {
+  CONFIRMADO
+  ANULADO
+}
+
+enum AccionPago {
+  CREADO
+  MODIFICADO
+  ANULADO
+}
+
+enum EstadoProfesora {
+  ACTIVA
+  INACTIVA
+}
+
+enum EstadoCurso {
+  ACTIVO
+  ARCHIVADO
+}
+
+enum DiaSemana {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+enum EstadoInscripcion {
+  ACTIVA
+  COMPLETADA
+  ABANDONADA
+}
+
+enum RolUsuario {
+  ADMIN
+}
+
+model Usuario {
+  id           Int        @id @default(autoincrement())
+  nombre       String
+  email        String     @unique
+  passwordHash String
+  rol          RolUsuario @default(ADMIN)
+  activo       Boolean    @default(true)
+  fechaAlta    DateTime   @default(now())
+
+  pagosRegistrados Pago[]       @relation("RegistroPago")
+  eventosPago      PagoEvento[]
+
+  @@map("usuarios")
+}
+
+// Ventanas compartidas entre instancias. No almacena emails ni IPs en claro.
+model LoginIntento {
+  clave     String   @id
+  intentos  Int
+  expira    DateTime @db.Timestamptz(3)
+
+  @@index([expira])
+  @@map("login_intentos")
+}
+
+model Alumno {
+  id              Int          @id @default(autoincrement())
+  nombre          String
+  apellido        String
+  dni             String       @unique
+  fechaNacimiento DateTime
+  telefono        String
+  email           String?
+  estado          EstadoAlumno @default(ACTIVO)
+  fechaAlta       DateTime     @default(now())
+
+  inscripciones Inscripcion[]
+
+  @@map("alumnos")
+}
+
+model Profesora {
+  id           Int             @id @default(autoincrement())
+  nombre       String
+  apellido     String
+  dni          String          @unique
+  telefono     String
+  email        String?
+  fechaIngreso DateTime        @default(now())
+  estado       EstadoProfesora @default(ACTIVA)
+
+  cursos Curso[]
+
+  @@map("profesoras")
+}
+
+model Curso {
+  id              Int         @id @default(autoincrement())
+  nombre          String
+  precioMensual   Decimal
+  precioMatricula Decimal
+  estado          EstadoCurso @default(ACTIVO)
+
+  profesoraId Int
+  profesora   Profesora @relation(fields: [profesoraId], references: [id])
+
+  inscripciones Inscripcion[]
+  horarios      HorarioCurso[]
+
+  @@map("cursos")
+}
+
+model HorarioCurso {
+  id Int @id @default(autoincrement())
+
+  cursoId Int
+  curso   Curso @relation(fields: [cursoId], references: [id])
+
+  diaSemana  DiaSemana
+  horaInicio String
+  horaFin    String
+
+  @@map("horarios_cursos")
+}
+
+model Inscripcion {
+  id Int @id @default(autoincrement())
+
+  alumnoId Int
+  alumno   Alumno @relation(fields: [alumnoId], references: [id])
+
+  cursoId Int
+  curso   Curso @relation(fields: [cursoId], references: [id])
+
+  año             Int
+  fechaInscripcion DateTime @default(now())
+
+  descuentoPorcentaje Decimal @default(0)
+
+  estado EstadoInscripcion @default(ACTIVA)
+
+  cuotas Cuota[]
+
+  @@unique([alumnoId, año])
+  @@map("inscripciones")
+}
+
+model Cuota {
+  id Int @id @default(autoincrement())
+
+  inscripcionId Int
+  inscripcion   Inscripcion @relation(fields: [inscripcionId], references: [id])
+
+  periodo  String
+  concepto TipoCuota
+
+  monto Decimal
+
+  fechaVencimiento DateTime
+
+  estado EstadoCuota @default(PENDIENTE)
+
+  pagos Pago[]
+
+  @@unique([inscripcionId, periodo, concepto])
+  @@map("cuotas")
+}
+
+model Pago {
+  id Int @id @default(autoincrement())
+
+  cuotaId Int
+  cuota   Cuota @relation(fields: [cuotaId], references: [id])
+
+  monto Decimal
+
+  fechaPago DateTime @default(now())
+
+  medio MedioPago
+
+  nombrePagador String?
+
+  estado EstadoPago @default(CONFIRMADO)
+
+  observaciones String?
+
+  // Nulos en pagos históricos: no se inventan autor ni fecha de registro.
+  usuarioRegistroId Int?
+  usuarioRegistro   Usuario?     @relation("RegistroPago", fields: [usuarioRegistroId], references: [id], onDelete: Restrict)
+  fechaRegistro     DateTime?    @default(now()) @db.Timestamptz(3)
+  eventos           PagoEvento[]
+
+  @@index([usuarioRegistroId])
+  @@map("pagos")
+}
+
+model PagoEvento {
+  id            Int        @id @default(autoincrement())
+  pagoId        Int
+  pago          Pago       @relation(fields: [pagoId], references: [id], onDelete: Restrict)
+  usuarioId     Int
+  usuario       Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  usuarioNombre String
+  fecha         DateTime   @default(now()) @db.Timestamptz(3)
+  accion        AccionPago
+  anterior      Json?
+  nuevo         Json
+  motivo        String?
+
+  @@index([pagoId, fecha, id])
+  @@index([usuarioId])
+  @@map("pago_eventos")
+}

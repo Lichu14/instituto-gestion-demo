@@ -1,0 +1,627 @@
+:host {
+    display: block;
+    padding: .25rem 0 1.75rem
+}
+
+.statement-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .65rem;
+    margin: -.25rem 0 1.25rem;
+}
+
+.download-statement {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    min-height: 2.75rem;
+    margin: 0;
+    color: var(--color-primary);
+    font-size: .82rem;
+}
+
+.download-statement svg { flex-shrink: 0; }
+.download-statement:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.statement-actions .error { margin: 0; }
+
+@media(max-width:640px) {
+    .statement-actions { align-items: stretch; }
+    .download-statement { width: 100%; }
+}
+
+.student-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: .25rem 0 1.25rem;
+    padding: 1.2rem 1.3rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm)
+}
+
+.student-identity {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    min-width: 0
+}
+
+.avatar {
+    display: grid;
+    width: 3.4rem;
+    height: 3.4rem;
+    flex: none;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: 1rem;
+    font-weight: 700
+}
+
+.eyebrow {
+    display: block;
+    margin-bottom: .25rem;
+    color: var(--color-text-soft);
+    font-size: .67rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase
+}
+
+.student-hero h2 {
+    margin: 0 0 .35rem;
+    font-size: 2rem
+}
+
+.personal-card,
+.enrollment-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm)
+}
+
+.personal-card {
+    padding: 1.15rem 1.25rem
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .9rem
+}
+
+.section-title h3 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: var(--font-display);
+    font-size: 1.35rem
+}
+
+.personal-data {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+    margin: 0
+}
+
+.personal-data div {
+    padding: .65rem .75rem;
+    border-radius: .55rem;
+    background: var(--color-surface-alt)
+}
+
+.personal-data dt,
+.field-label {
+    margin: 0;
+    color: var(--color-text-soft);
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase
+}
+
+.personal-data dd {
+    margin: .15rem 0 0;
+    font-size: .8rem;
+    font-weight: 600;
+    overflow-wrap: anywhere
+}
+
+.enrollments-section {
+    margin-top: 1.25rem
+}
+
+.enrollment-count {
+    color: var(--color-text-muted);
+    font-size: .76rem
+}
+
+.enrollment-card {
+    margin-bottom: .85rem;
+    overflow: hidden
+}
+
+.enrollment-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-border)
+}
+
+.enrollment-card--collapsed .enrollment-head {
+    border-bottom-color: transparent
+}
+
+.enrollment-summary {
+    min-width: 0
+}
+
+.enrollment-head h4 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    color: var(--color-text)
+}
+
+.enrollment-date {
+    display: block;
+    margin-top: .2rem;
+    color: var(--color-text-muted);
+    font-size: .73rem
+}
+
+.enrollment-status {
+    display: flex;
+    align-items: center;
+    gap: .5rem
+}
+
+.enrollment-toggle {
+    display: inline-grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 2.25rem;
+    margin: 0 0 0 .15rem;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: .55rem;
+    background: var(--color-surface-alt);
+    color: var(--color-text-muted)
+}
+
+.enrollment-toggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary)
+}
+
+.enrollment-toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px
+}
+
+.enrollment-toggle svg {
+    transition: transform 180ms ease
+}
+
+.enrollment-toggle[aria-expanded="false"] svg {
+    transform: rotate(-90deg)
+}
+
+.enrollment-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 220ms ease, opacity 160ms ease
+}
+
+.enrollment-content--expanded {
+    grid-template-rows: 1fr;
+    opacity: 1
+}
+
+.enrollment-content-inner {
+    min-height: 0;
+    overflow: hidden
+}
+
+.discount {
+    padding: .18rem .45rem;
+    border-radius: 999px;
+    background: var(--color-neutral-soft);
+    color: var(--color-text-muted);
+    font-size: .66rem;
+    font-weight: 700
+}
+
+.discount--active {
+    background: var(--color-warning-soft);
+    color: var(--color-warning)
+}
+
+.fees-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .75rem 1.25rem .35rem
+}
+
+.fees-heading h5,
+.payments-fee h6 {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase
+}
+
+.fees-heading span {
+    color: var(--color-text-soft);
+    font-size: .68rem
+}
+
+.fee-card {
+    margin: 15px .75rem;
+    padding: .8rem;
+    border: 1px solid var(--color-border);
+    border-radius: .65rem;
+    background: var(--color-surface-alt);
+}
+
+.fee-main {
+    display: grid;
+    grid-template-columns: minmax(7rem, 1.1fr) repeat(3, minmax(6rem, .7fr)) 8rem;
+    align-items: center;
+    gap: .8rem
+}
+
+.fee-period,
+.fee-concept {
+    display: block
+}
+
+.fee-period {
+    font-size: .87rem
+}
+
+.fee-concept {
+    margin-top: .1rem;
+    color: var(--color-text-muted);
+    font-size: .68rem
+}
+
+.fee-metric strong,
+.fee-due strong {
+    display: block;
+    margin-top: .12rem;
+    font-size: .78rem
+}
+
+.fee-balance strong {
+    color: var(--color-danger)
+}
+
+.fee-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-top: .65rem;
+    padding-top: .65rem;
+    border-top: 1px solid var(--color-border)
+}
+
+.fee-actions>div {
+    display: flex;
+    gap: .5rem
+}
+
+.registrar-pago {
+    padding: .35rem .6rem;
+    border: 1px solid #b8d8c5;
+    border-radius: .45rem;
+    background: var(--color-success-soft);
+    color: var(--color-success);
+    font-size: .72rem;
+    font-weight: 700
+}
+
+.registrar-pago:hover, .registrar-pago:visited:hover {
+    text-decoration: none;
+    background: var(--color-primary);
+    color: #fff
+}
+
+.anular-cuota {
+    margin: 0;
+    padding: .35rem .6rem;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: .72rem
+}
+
+.anular-cuota:hover:not(:disabled) {
+    border-color: var(--color-danger);
+    color: var(--color-danger)
+}
+
+.pagada-msg {
+    color: var(--color-success);
+    font-size: .72rem;
+    font-weight: 700
+}
+
+.payments-fee {
+    margin-top: .7rem;
+    padding-top: .65rem;
+    border-top: 1px solid var(--color-border)
+}
+
+.payments-fee h6 {
+    margin: 0 0 .65rem;
+    font-size: .78rem;
+    line-height: 1.5
+}
+
+.sin-pagos,
+.empty-state {
+    margin: .5rem 0;
+    color: var(--color-text-muted);
+    font-size: .8rem
+}
+
+.payment-heading,
+.payment {
+    display: grid;
+    grid-template-columns: 7rem minmax(8rem, 1fr) 8.5rem 9rem;
+    column-gap: 1rem;
+    row-gap: .35rem;
+    align-items: center;
+    padding: .65rem 0;
+    color: var(--color-text-muted);
+    font-size: .8rem
+}
+
+.payment-heading {
+    padding-top: 0;
+    font-size: .68rem;
+    font-weight: 600
+}
+
+.payment {
+    min-height: 2.75rem;
+    border-top: 1px solid var(--color-border)
+}
+
+.payment > * {
+    min-width: 0
+}
+
+.payment-amount,
+.payment-heading > :first-child {
+    text-align: right
+}
+
+.payment time,
+.payment-heading > :last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap
+}
+
+.payment-payer {
+    overflow-wrap: anywhere
+}
+
+.payment app-pago-registro { grid-column: 1 / -1; padding-top: .1rem; }
+.payment > .estado-ANULADO { justify-self: start; }
+
+.payment strong {
+    color: var(--color-success);
+    font-size: .85rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap
+}
+
+.payment-method {
+    justify-self: start;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    padding: .18rem .45rem;
+    border-radius: 999px;
+    background: var(--color-info-soft);
+    color: var(--color-info);
+    font-size: .66rem;
+    font-weight: 700
+}
+
+.payment small {
+    grid-column: 2/-1;
+    color: var(--color-text-muted);
+    font-size: .75rem;
+    overflow-wrap: anywhere
+}
+
+.muted {
+    color: var(--color-text-muted)
+}
+
+@media(max-width:1100px) {
+    .fee-main { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .fee-main > .estado { grid-column: 3; }
+    .fee-due { grid-row: 2; }
+    .payment-heading { display: none; }
+    .payment {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas: "payer amount" "method date" "note note";
+        row-gap: .5rem
+    }
+    .payment-payer { grid-area: payer; }
+    .payment-amount { grid-area: amount; }
+    .payment-method { grid-area: method; }
+    .payment time { grid-area: date; }
+    .payment small { grid-area: note; }
+}
+
+@media(max-width:860px) {
+    .personal-data {
+        grid-template-columns: repeat(2, 1fr)
+    }
+
+    .fee-main {
+        grid-template-columns: repeat(3, 1fr)
+    }
+
+    .fee-main>.estado {
+        grid-column: 3
+    }
+
+    .fee-due {
+        grid-row: 2
+    }
+
+}
+
+@media(max-width:640px) {
+    :host {
+        padding-top: 0
+    }
+
+    .student-hero {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 1rem
+    }
+
+    .student-hero .new-link {
+        width: 100%;
+        justify-content: center
+    }
+
+    .student-hero h2 {
+        font-size: 1.65rem
+    }
+
+    .personal-card {
+        padding: 1rem
+    }
+
+    .personal-data {
+        grid-template-columns: 1fr
+    }
+
+    .enrollment-head {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 1rem
+    }
+
+    .enrollment-status {
+        width: 100%
+    }
+
+    .enrollment-toggle {
+        margin-left: auto
+    }
+
+    .fees-heading {
+        padding: .7rem 1rem .3rem
+    }
+
+    .fee-card {
+        margin: .4rem .55rem;
+        padding: .75rem
+    }
+
+    .fee-main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas: "period status" "amount balance" "due due";
+        gap: .65rem
+    }
+
+    .fee-description { grid-area: period; }
+    .fee-metric { grid-area: amount; }
+    .fee-balance { grid-area: balance; }
+    .fee-due { grid-area: due; }
+
+    .fee-main>.estado {
+        grid-area: status
+    }
+
+    .fee-actions {
+        align-items: flex-start;
+        flex-direction: column
+    }
+
+    .fee-actions>div {
+        width: 100%
+    }
+
+    .registrar-pago,
+    .anular-cuota {
+        flex: 1;
+        text-align: center
+    }
+
+    .payment {
+        grid-template-columns: minmax(0, 1fr) auto
+    }
+
+    .payment time {
+        font-size: .72rem
+    }
+
+    .enrollment-status {
+        flex-wrap: wrap
+    }
+
+    .back-link {
+        margin-bottom: .65rem
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .enrollment-content,
+    .enrollment-toggle svg {
+        transition: none
+    }
+}
+
+/* Keep fee status and actions aligned with the payment history. */
+.fee-main > .estado { justify-self: end; }
+.fee-metric strong, .fee-due strong { font-variant-numeric: tabular-nums; }
+.fee-balance strong { color: var(--color-text); }
+.fee-actions > .fee-buttons { flex-wrap: wrap; }
+.fee-actions > .fee-buttons:not(:has(*)) { display: none; }
+.registrar-pago, .anular-cuota {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+    line-height: 1.5;
+}
+.registrar-pago:visited { color: var(--color-success); }
+
+@media(max-width:360px) {
+    .payment {
+        grid-template-areas: "payer amount" "method method" "date date" "note note";
+    }
+    .payment time { text-align: left; }
+}
+
+.student-name { min-width: 0; overflow-wrap: anywhere; }
+.payment-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .4rem 1rem; min-width: 0; }
+.student-hero > .new-link { flex-shrink: 0; }

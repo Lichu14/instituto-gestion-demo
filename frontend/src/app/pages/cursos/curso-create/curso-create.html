@@ -1,0 +1,112 @@
+<a [routerLink]="['/cursos']" class="back-link">&larr; Volver al listado</a>
+
+<h2>Nuevo curso</h2>
+
+<app-loading-state *ngIf="loadingProfesoras()" message="Cargando profesoras..."></app-loading-state>
+
+<app-error-state *ngIf="loadError()" [message]="loadError()" (retry)="ngOnInit()"></app-error-state>
+
+<form *ngIf="!loadingProfesoras() && !loadError()" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="field">
+    <label for="nombre">Nombre *</label>
+    <input id="nombre" type="text" formControlName="nombre">
+    <small
+      class="error"
+      *ngIf="form.controls.nombre.touched && form.controls.nombre.hasError('required')"
+    >
+      El nombre es obligatorio.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="precioMensual">Precio mensual *</label>
+    <input id="precioMensual" type="number" formControlName="precioMensual">
+    <small
+      class="error"
+      *ngIf="form.controls.precioMensual.touched && form.controls.precioMensual.hasError('required')"
+    >
+      El precio mensual es obligatorio.
+    </small>
+    <small
+      class="error"
+      *ngIf="form.controls.precioMensual.touched && form.controls.precioMensual.hasError('min')"
+    >
+      El precio mensual debe ser mayor a 0.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="precioMatricula">Precio matrícula *</label>
+    <input id="precioMatricula" type="number" formControlName="precioMatricula">
+    <small
+      class="error"
+      *ngIf="form.controls.precioMatricula.touched && form.controls.precioMatricula.hasError('required')"
+    >
+      El precio de matrícula es obligatorio.
+    </small>
+    <small
+      class="error"
+      *ngIf="form.controls.precioMatricula.touched && form.controls.precioMatricula.hasError('min')"
+    >
+      El precio de matrícula debe ser mayor a 0.
+    </small>
+  </div>
+
+  <div class="field">
+    <label for="profesoraId">Profesora *</label>
+    <select id="profesoraId" formControlName="profesoraId">
+      <option [ngValue]="null" disabled>Seleccione una profesora</option>
+      <option *ngFor="let profesora of profesoras()" [ngValue]="profesora.id">
+        {{ profesora.nombre }} {{ profesora.apellido }}
+      </option>
+    </select>
+    <small
+      class="error"
+      *ngIf="form.controls.profesoraId.touched && form.controls.profesoraId.hasError('required')"
+    >
+      Debe seleccionar una profesora.
+    </small>
+  </div>
+
+  <section formArrayName="horarios">
+    <h3>Horarios *</h3>
+
+    <div class="horario-row" *ngFor="let horario of horarios.controls; let i = index" [formGroupName]="i">
+      <div class="field">
+        <label [for]="'diaSemana' + i">Día *</label>
+        <select [id]="'diaSemana' + i" formControlName="diaSemana">
+          <option [ngValue]="null" disabled>Seleccione un día</option>
+          <option *ngFor="let dia of diasSemana" [ngValue]="dia">
+            {{ dia }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label [for]="'horaInicio' + i">Hora de inicio *</label>
+        <input [id]="'horaInicio' + i" type="time" formControlName="horaInicio">
+      </div>
+
+      <div class="field">
+        <label [for]="'horaFin' + i">Hora de fin *</label>
+        <input [id]="'horaFin' + i" type="time" formControlName="horaFin">
+      </div>
+
+      <button
+        type="button"
+        (click)="removeHorario(i)"
+        [disabled]="horarios.length === 1"
+      >
+        Quitar horario
+      </button>
+    </div>
+
+    <button type="button" (click)="addHorario()">Agregar horario</button>
+  </section>
+
+  <app-error-state *ngIf="submitError()" [message]="submitError()" (retry)="onSubmit()"></app-error-state>
+
+  <button type="submit" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Creando...' : 'Crear curso' }}
+  </button>
+</form>

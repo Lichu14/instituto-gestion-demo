@@ -1,0 +1,103 @@
+<a [routerLink]="['/pagos']" class="back-link">&larr; Volver al listado</a>
+
+<app-loading-state *ngIf="loading()" message="Cargando pago..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loading() && !error()">
+  <ng-container *ngIf="pago() as p; else noPago">
+    <header class="payment-header">
+      <h2>Pago #{{ p.id }}</h2>
+      <app-comprobante-pago [pagoId]="p.id"></app-comprobante-pago>
+    </header>
+
+    <dl>
+      <dt>Monto</dt>
+      <dd>{{ p.monto | formatMoneda }}</dd>
+
+      <dt>Fecha de pago</dt>
+      <dd>{{ p.fechaPago | formatFecha:'time' }}</dd>
+
+      <dt>Medio</dt>
+      <dd>{{ p.medio }}</dd>
+
+      <dt>Pagador</dt>
+      <dd>{{ p.nombrePagador || '-' }}</dd>
+
+      <dt>Estado</dt>
+      <dd><span class="badge estado-{{ p.estado }}">{{ p.estado }}</span></dd>
+
+      <dt>Observaciones</dt>
+      <dd>{{ p.observaciones || '-' }}</dd>
+    </dl>
+
+    <section class="audit-section" aria-labelledby="audit-title">
+      <h3 id="audit-title">Registro del pago</h3>
+      <app-pago-registro [pago]="p"></app-pago-registro>
+      <details *ngIf="p.eventos?.length" class="audit-history">
+        <summary>Ver historial de cambios ({{ p.eventos?.length }})</summary>
+        <ol>
+          <li *ngFor="let evento of p.eventos">
+            <strong>{{ acciones[evento.accion] }}</strong>
+            <span>{{ evento.usuarioNombre }} · <time [attr.datetime]="evento.fecha">{{ evento.fecha | formatFecha:'time' }}</time></span>
+            <p *ngIf="evento.motivo">Motivo: {{ evento.motivo }}</p>
+            <p *ngIf="evento.accion === 'MODIFICADO'">{{ describirCambios(evento) }}</p>
+          </li>
+        </ol>
+      </details>
+    </section>
+
+    <section>
+      <h3>Cuota</h3>
+
+      <dl>
+        <dt>Período</dt>
+        <dd>{{ p.cuota.periodo }} ({{ p.cuota.concepto }})</dd>
+
+        <dt>Monto de la cuota</dt>
+        <dd>{{ p.cuota.monto | formatMoneda }}</dd>
+
+        <dt>Estado de la cuota</dt>
+        <dd><span class="badge estado-{{ p.cuota.estado }}">{{ p.cuota.estado }}</span></dd>
+      </dl>
+    </section>
+
+    <section>
+      <h3>Alumno</h3>
+
+      <dl>
+        <dt>Nombre</dt>
+        <dd>
+          {{ p.cuota.inscripcion.alumno.nombre }}
+          {{ p.cuota.inscripcion.alumno.apellido }}
+        </dd>
+
+        <dt>DNI</dt>
+        <dd>{{ p.cuota.inscripcion.alumno.dni }}</dd>
+      </dl>
+
+      <a [routerLink]="['/alumnos', p.cuota.inscripcion.alumno.id]">Ver alumno</a>
+    </section>
+
+    <section>
+      <h3>Curso</h3>
+
+      <dl>
+        <dt>Nombre</dt>
+        <dd>{{ p.cuota.inscripcion.curso.nombre }}</dd>
+      </dl>
+
+      <a [routerLink]="['/cursos', p.cuota.inscripcion.curso.id]">Ver curso</a>
+    </section>
+
+    <section>
+      <a [routerLink]="['/inscripciones', p.cuota.inscripcion.id]">
+        Ver inscripción
+      </a>
+    </section>
+  </ng-container>
+
+  <ng-template #noPago>
+    <p>El pago solicitado no existe.</p>
+  </ng-template>
+</ng-container>

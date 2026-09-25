@@ -1,0 +1,239 @@
+<a href="/pagos" (click)="goBack($event)" class="back-link">&larr; Volver</a>
+
+<h2>Registrar pago</h2>
+
+<app-loading-state *ngIf="loadingData()" message="Cargando datos..."></app-loading-state>
+
+<app-error-state *ngIf="loadError()" [message]="loadError()" (retry)="ngOnInit()"></app-error-state>
+
+<ng-container *ngIf="!loadingData() && !loadError()">
+
+  <!-- Modo /pagos/nuevo: selección en cascada Alumno → Inscripción → Cuota -->
+  <ng-container *ngIf="!cuotaFija()">
+    <form [formGroup]="selectionForm" class="selection-form">
+      <div class="field">
+        <label for="alumnoId">Alumno *</label>
+        <select
+          id="alumnoId"
+          formControlName="alumnoId"
+          (change)="onAlumnoChange($any($event.target).value)"
+        >
+          <option [ngValue]="null" disabled>Seleccione un alumno</option>
+          <option *ngFor="let alumno of alumnos()" [value]="alumno.id">
+            {{ alumno.apellido }}, {{ alumno.nombre }} - DNI: {{ alumno.dni }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field" *ngIf="alumnoSeleccionadoId() !== null">
+        <label for="inscripcionId">Inscripción *</label>
+
+        <app-loading-state *ngIf="loadingInscripciones()" message="Cargando inscripciones..." [inline]="true"></app-loading-state>
+
+        <app-error-state
+          *ngIf="inscripcionesError()"
+          [message]="inscripcionesError()"
+          (retry)="retryInscripciones()"
+        ></app-error-state>
+
+        <ng-container *ngIf="!loadingInscripciones()">
+          <p *ngIf="inscripciones().length === 0">
+            Este alumno no tiene inscripciones.
+          </p>
+
+          <select
+            *ngIf="inscripciones().length > 0"
+            id="inscripcionId"
+            formControlName="inscripcionId"
+            (change)="onInscripcionChange($any($event.target).value)"
+          >
+            <option [ngValue]="null" disabled>Seleccione una inscripción</option>
+            <option
+              *ngFor="let inscripcion of inscripciones()"
+              [value]="inscripcion.id"
+            >
+              {{ inscripcion.curso.nombre }} - {{ inscripcion['año'] }}
+              ({{ inscripcion.estado }})
+            </option>
+          </select>
+        </ng-container>
+      </div>
+
+      <div
+        class="field"
+        *ngIf="inscripcionDetalle() !== null && inscripciones().length > 0"
+      >
+        <label for="cuotaId">Cuota *</label>
+
+        <p *ngIf="cuotasDisponibles().length === 0">
+          No hay cuotas pendientes para esta inscripción.
+        </p>
+
+        <select
+          *ngIf="cuotasDisponibles().length > 0"
+          id="cuotaId"
+          formControlName="cuotaId"
+          (change)="onCuotaChange($any($event.target).value)"
+        >
+          <option [ngValue]="null" disabled>Seleccione una cuota</option>
+          <option *ngFor="let cuota of cuotasDisponibles()" [value]="cuota.id">
+            {{ cuota.periodo }} ({{ cuota.concepto }}) -
+            Monto: {{ cuota.monto | formatMoneda }} - {{ cuota.estado }}
+          </option>
+        </select>
+      </div>
+    </form>
+  </ng-container>
+
+  <!-- Contexto de la cuota (ambos modos) -->
+  <ng-container *ngIf="cuota() as cuota">
+    <section>
+      <h3>Resumen</h3>
+
+      <dl>
+        <ng-container *ngIf="alumnoInfo() as alumno">
+          <dt>Alumno</dt>
+          <dd>{{ alumno.nombre }} {{ alumno.apellido }}</dd>
+        </ng-container>
+
+        <ng-container *ngIf="cursoInfo() as curso">
+          <dt>Curso</dt>
+          <dd>{{ curso.nombre }}</dd>
+        </ng-container>
+
+        <dt>Cuota</dt>
+        <dd>{{ cuota.periodo }} ({{ cuota.concepto }})</dd>
+
+        <dt>Monto de la cuota</dt>
+        <dd>{{ cuota.monto | formatMoneda }}</dd>
+
+        <dt>Fecha de vencimiento</dt>
+        <dd>{{ cuota.fechaVencimiento | formatFecha }}</dd>
+
+        <dt>Estado</dt>
+        <dd>{{ cuota.estado }}</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h3>Pagos realizados</h3>
+
+      <p *ngIf="pagos().length === 0">No hay pagos registrados.</p>
+
+      <ul *ngIf="pagos().length > 0">
+        <li *ngFor="let pago of pagos()">
+          Pago: {{ pago.fechaPago | formatFecha:'time' }} - {{ pago.monto | formatMoneda }} - {{ pago.medio }}
+          - Pagador: {{ pago.nombrePagador || '-' }}
+          <span *ngIf="pago.observaciones"> - {{ pago.observaciones }}</span>
+          <span *ngIf="pago.estado === 'ANULADO'"> · Anulado</span>
+          <app-pago-registro [pago]="pago"></app-pago-registro>
+          <app-comprobante-pago [pagoId]="pago.id"></app-comprobante-pago>
+        </li>
+      </ul>
+
+      <dl>
+        <dt>Total pagado</dt>
+        <dd>{{ totalPagado() | formatMoneda }}</dd>
+
+        <dt>Saldo pendiente</dt>
+        <dd>{{ saldo() | formatMoneda }}</dd>
+      </dl>
+    </section>
+
+    <!-- Formulario de registro (solo si queda saldo) -->
+    <section *ngIf="saldo() > 0 && cuota.estado !== 'ANULADA'">
+      <h3>Nuevo pago</h3>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label for="nombrePagador">Nombre del pagador *</label>
+          <input id="nombrePagador" type="text" formControlName="nombrePagador" maxlength="100">
+          <small
+            class="error"
+            *ngIf="form.controls.nombrePagador.touched && form.controls.nombrePagador.hasError('required')"
+          >
+            El nombre del pagador es obligatorio.
+          </small>
+          <small
+            class="error"
+            *ngIf="form.controls.nombrePagador.touched && form.controls.nombrePagador.hasError('maxlength')"
+          >
+            El nombre del pagador no puede superar los 100 caracteres.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="monto">Monto a pagar *</label>
+          <input
+            id="monto"
+            type="number"
+            formControlName="monto"
+            min="0.01"
+            step="0.01"
+          >
+          <small
+            class="error"
+            *ngIf="form.controls.monto.touched && form.controls.monto.hasError('required')"
+          >
+            El monto es obligatorio.
+          </small>
+          <small
+            class="error"
+            *ngIf="form.controls.monto.touched && form.controls.monto.hasError('min')"
+          >
+            El monto debe ser mayor que cero.
+          </small>
+          <small
+            class="error"
+            *ngIf="form.controls.monto.touched && form.controls.monto.hasError('max')"
+          >
+            El monto no puede superar el saldo pendiente ({{ saldo() | formatMoneda }}).
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="medio">Medio de pago *</label>
+          <select id="medio" formControlName="medio">
+            <option [ngValue]="null" disabled>Seleccione un medio</option>
+            <option value="EFECTIVO">Efectivo</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+          </select>
+          <small
+            class="error"
+            *ngIf="form.controls.medio.touched && form.controls.medio.hasError('required')"
+          >
+            El medio de pago es obligatorio.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="fechaPago">Fecha y hora del pago</label>
+          <input id="fechaPago" type="datetime-local" formControlName="fechaPago" aria-describedby="fecha-pago-help">
+          <small id="fecha-pago-help">Cuándo se realizó el pago. Si lo dejás vacío, se usa el momento actual. El registro se fecha automáticamente.</small>
+        </div>
+
+        <div class="field">
+          <label for="observaciones">Observaciones</label>
+          <input
+            id="observaciones"
+            type="text"
+            formControlName="observaciones"
+          >
+        </div>
+
+        <app-error-state *ngIf="submitError()" [message]="submitError()" (retry)="onSubmit()"></app-error-state>
+
+        <p class="success" *ngIf="successMessage()">{{ successMessage() }}</p>
+
+        <button type="submit" [disabled]="form.invalid || submitting()">
+          {{ submitting() ? 'Registrando...' : 'Registrar pago' }}
+        </button>
+      </form>
+    </section>
+
+    <p *ngIf="saldo() <= 0 && pagos().length > 0" class="success">
+      La cuota está completamente pagada.
+    </p>
+  </ng-container>
+</ng-container>
+

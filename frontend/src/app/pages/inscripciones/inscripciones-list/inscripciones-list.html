@@ -1,0 +1,76 @@
+<header class="enrollments-header">
+  <div>
+    <span class="eyebrow">Inscripciones</span>
+    <h2>Inscripciones</h2>
+    <p>Gestioná las inscripciones de los alumnos.</p>
+  </div>
+  <a [routerLink]="['/inscripciones', 'nueva']" class="new-link">+ Nueva inscripción</a>
+</header>
+<app-loading-state *ngIf="loading()" message="Cargando inscripciones..."></app-loading-state
+><app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+<ng-container *ngIf="!loading() && !error()"
+  ><ng-container *ngIf="inscripciones().length > 0"
+    ><section class="enrollments-tools" aria-label="Búsqueda y visualización">
+      <div class="search-group">
+        <label for="enrollments-search">Buscar inscripción</label
+        ><input
+          id="enrollments-search"
+          type="search"
+          class="search-input"
+          placeholder="Alumno, DNI, teléfono o curso..."
+          [value]="searchTerm()"
+          (input)="onSearch($event)"
+        />
+      </div>
+      <label class="filter-check"
+        ><input
+          type="checkbox"
+          [checked]="showAbandonadas()"
+          (change)="onToggleAbandonadas($event)"
+        /><span>Mostrar inscripciones abandonadas</span></label
+      >
+    </section>
+    <p class="state-message" *ngIf="filteredInscripciones().length === 0">
+      Ninguna inscripción coincide con tu búsqueda.
+    </p></ng-container
+  >
+  <p class="state-message" *ngIf="inscripciones().length === 0">
+    No hay inscripciones registradas.
+  </p>
+  <section
+    class="inscripciones"
+    *ngIf="filteredInscripciones().length > 0"
+    aria-label="Listado de inscripciones"
+  >
+    <article class="inscripcion" *ngFor="let inscripcion of filteredInscripciones()">
+      <div class="student">
+        <span class="student-mark"
+          >{{ inscripcion.alumno.nombre.charAt(0)
+          }}{{ inscripcion.alumno.apellido.charAt(0) }}</span
+        >
+        <div>
+          <strong>{{ inscripcion.alumno.apellido }}, {{ inscripcion.alumno.nombre }}</strong
+          ><small>DNI {{ inscripcion.alumno.dni }}</small>
+        </div>
+      </div>
+      <div class="enrollment-course">
+        <span class="field-label">Curso</span><strong>{{ inscripcion.curso.nombre }}</strong
+        ><small>Año {{ inscripcion['año'] }}</small>
+      </div>
+      <div class="enrollment-info">
+        <div>
+          <span class="field-label">Fecha de inscripción</span
+          ><strong>{{ inscripcion.fechaInscripcion | formatFecha }}</strong>
+        </div>
+        <div class="discount" [class.discount--active]="+inscripcion.descuentoPorcentaje > 0">
+          <span class="field-label">Descuento</span
+          ><strong>{{ inscripcion.descuentoPorcentaje }}%</strong>
+        </div>
+      </div>
+      <span class="estado estado-{{ inscripcion.estado }}">{{ inscripcion.estado }}</span
+      ><a class="detail-link" [routerLink]="['/inscripciones', inscripcion.id]"
+        >Ver detalle <span aria-hidden="true">›</span></a
+      >
+    </article>
+  </section></ng-container
+>

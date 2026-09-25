@@ -1,0 +1,32 @@
+<div class="page-header">
+  <h2>Cursos</h2>
+  <a [routerLink]="['/cursos/nuevo']" class="new-link">+ Crear curso</a>
+</div>
+
+<app-loading-state *ngIf="loading()" message="Cargando cursos..."></app-loading-state>
+
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+
+<p class="state-message" *ngIf="!loading() && !error() && cursos().length === 0">No hay cursos registrados.</p>
+
+<ul class="courses-list" *ngIf="!loading() && !error()">
+  <li class="course-card" *ngFor="let curso of cursos()">
+    <div class="course-heading">
+      <h3>{{ curso.nombre }}</h3>
+      <span class="badge estado-{{ curso.estado }}">{{ curso.estado }}</span>
+    </div>
+    <dl class="course-prices">
+      <div>
+        <dt>Mensualidad</dt>
+        <dd>{{ curso.precioMensual | formatMoneda }}</dd>
+      </div>
+      <div>
+        <dt>Matrícula</dt>
+        <dd>{{ curso.precioMatricula | formatMoneda }}</dd>
+      </div>
+    </dl>
+    <div class="course-actions">
+      <a [routerLink]="['/cursos', curso.id]" [attr.aria-label]="'Ver detalle de ' + curso.nombre">Ver detalle <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </li>
+</ul>

@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.loading-state {
+  min-height: clamp(14rem, 40vh, 24rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.loading-state-inline {
+  min-height: 4rem;
+}
+
+.loading-hourglass {
+  display: inline-block;
+  font-size: 1.35rem;
+  animation: loading-hourglass 1.1s ease-in-out infinite;
+}
+
+@keyframes loading-hourglass {
+  0%, 100% { transform: rotate(0deg); }
+  45%, 55% { transform: rotate(180deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-hourglass {
+    animation: none;
+  }
+}

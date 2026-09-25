@@ -1,0 +1,157 @@
+<app-loading-state *ngIf="loading()" message="Cargando dashboard..."></app-loading-state>
+<app-error-state *ngIf="error()" [message]="error()" (retry)="ngOnInit()"></app-error-state>
+<ng-container *ngIf="!loading() && !error()">
+  <header class="dashboard-header">
+    <div>
+      <span class="eyebrow">Panel general</span>
+      <h2>Inicio</h2>
+      <p>Una vista clara del estado actual del instituto.</p>
+    </div>
+    <div class="header-note">
+      <span class="header-note-mark">IG</span><span>Instituto Gestión</span>
+    </div>
+  </header>
+  <section class="overview" aria-label="Resumen del instituto">
+    <a class="overview-stat overview-stat--students" routerLink="/alumnos"
+      ><span class="stat-icon" aria-hidden="true">♟</span
+      ><span
+        ><strong>{{ alumnosActivos() }}</strong
+        ><small>Alumnos activos</small></span
+      ><span class="arrow" aria-hidden="true">›</span></a
+    >
+    <a class="overview-stat overview-stat--courses" routerLink="/cursos"
+      ><span class="stat-icon" aria-hidden="true">▤</span
+      ><span
+        ><strong>{{ cursosActivos() }}</strong
+        ><small>Cursos activos</small></span
+      ><span class="arrow" aria-hidden="true">›</span></a
+    >
+    <a class="overview-stat overview-stat--enrollments" routerLink="/inscripciones"
+      ><span class="stat-icon" aria-hidden="true">▣</span
+      ><span
+        ><strong>{{ inscripcionesActivas() }}</strong
+        ><small>Inscripciones activas</small></span
+      ><span class="arrow" aria-hidden="true">›</span></a
+    >
+  </section>
+  <section class="dashboard-main" aria-label="Situación financiera y vencimientos">
+    <div class="finance-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">Situación financiera</span>
+          <h3>Cobranza del mes</h3>
+        </div>
+        <a routerLink="/cuotas">Ver cuotas <span aria-hidden="true">›</span></a>
+      </div>
+      <a class="collection-total" routerLink="/cuotas"
+        ><span class="collection-icon" aria-hidden="true">$</span
+        ><span class="collection-copy"
+          ><small>Pendiente de cobro</small><strong>{{ pendienteCobro() | formatMoneda }}</strong
+          ><em>Saldo actual por regularizar</em></span
+        ><span class="collection-link">Ver detalle <span aria-hidden="true">›</span></span></a
+      >
+      <div class="finance-breakdown">
+        <div class="finance-item finance-item--success">
+          <span class="finance-label">Cobrado este mes</span
+          ><strong>{{ cobradoEsteMes() | formatMoneda }}</strong
+          ><span class="finance-status">Cobranza registrada</span>
+        </div>
+        <div class="finance-item finance-item--warning">
+          <span class="finance-label">Pendiente</span
+          ><strong>{{ pendienteMesActual() | formatMoneda }}</strong
+          ><span class="finance-status">Correspondiente al mes actual</span>
+        </div>
+        <div class="finance-item finance-item--danger">
+          <span class="finance-label">Vencido</span><strong>{{ vencido() | formatMoneda }}</strong
+          ><span class="finance-status">Requiere seguimiento</span>
+        </div>
+      </div>
+      <a
+        class="attention-banner"
+        routerLink="/cuotas"
+        [class.attention-banner--clear]="cuotasVencidas().length === 0"
+        ><span class="attention-symbol" aria-hidden="true">!</span
+        ><span *ngIf="cuotasVencidas().length > 0"
+          ><small>Atención administrativa</small
+          ><strong>{{ cuotasVencidas().length }} cuota(s) vencida(s)</strong
+          ><em>{{ vencido() | formatMoneda }} pendientes</em></span
+        ><span *ngIf="cuotasVencidas().length === 0"
+          ><small>Estado al día</small><strong>No hay cuotas vencidas</strong
+          ><em>La cobranza no presenta atrasos.</em></span
+        ><span class="attention-action">Revisar <span aria-hidden="true">›</span></span></a
+      >
+    </div>
+    <aside class="due-panel">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">Agenda de cobros</span>
+          <h3>Próximos vencimientos</h3>
+        </div>
+        <a routerLink="/cuotas">Ver todos</a>
+      </div>
+      <ul class="due-list" *ngIf="proximosVencimientos().length > 0">
+        <li *ngFor="let cuota of proximosVencimientos()">
+          <span class="due-date">{{ cuota.fechaVencimiento | formatFecha }}</span
+          ><span class="due-person"
+            ><strong
+              >{{ cuota.inscripcion.alumno.apellido }},
+              {{ cuota.inscripcion.alumno.nombre }}</strong
+            ><small>{{ cuota.periodo }} · {{ cuota.concepto }}</small></span
+          ><strong class="due-amount">{{ saldo(cuota) | formatMoneda }}</strong>
+        </li>
+      </ul>
+      <p class="empty-list" *ngIf="proximosVencimientos().length === 0">
+        No hay vencimientos próximos.
+      </p>
+    </aside>
+  </section>
+  <section class="activity-section" aria-label="Actividad reciente">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Movimientos recientes</span>
+        <h3>Actividad del instituto</h3>
+      </div>
+    </div>
+    <div class="activity-grid">
+      <section class="activity-panel">
+        <div class="activity-title">
+          <span class="activity-mark activity-mark--payment" aria-hidden="true">$</span>
+          <h4>Últimos pagos</h4>
+          <a routerLink="/pagos">Ver todos</a>
+        </div>
+        <ul class="activity-list" *ngIf="ultimosPagos().length > 0">
+          <li *ngFor="let pago of ultimosPagos()">
+            <span class="activity-dot activity-dot--payment" aria-hidden="true"></span
+            ><span class="activity-detail"
+              ><strong
+                >{{ pago.cuota.inscripcion.alumno.apellido }},
+                {{ pago.cuota.inscripcion.alumno.nombre }}</strong
+              ><small>{{ pago.cuota.periodo }} · {{ pago.cuota.concepto }}</small></span
+            ><strong class="activity-value">{{ pago.monto | formatMoneda }}</strong
+            ><time>{{ pago.fechaPago | formatFecha: 'time' }}</time>
+          </li>
+        </ul>
+        <p class="empty-list" *ngIf="ultimosPagos().length === 0">No hay pagos registrados.</p>
+      </section>
+      <section class="activity-panel">
+        <div class="activity-title">
+          <span class="activity-mark activity-mark--enrollment" aria-hidden="true">+</span>
+          <h4>Últimas inscripciones</h4>
+          <a routerLink="/inscripciones">Ver todas</a>
+        </div>
+        <ul class="activity-list" *ngIf="ultimasInscripciones().length > 0">
+          <li *ngFor="let inscripcion of ultimasInscripciones()">
+            <span class="activity-dot activity-dot--enrollment" aria-hidden="true"></span
+            ><span class="activity-detail"
+              ><strong>{{ inscripcion.alumno.apellido }}, {{ inscripcion.alumno.nombre }}</strong
+              ><small>{{ inscripcion.curso.nombre }} · {{ inscripcion['año'] }}</small></span
+            ><time>{{ inscripcion.fechaInscripcion | formatFecha }}</time>
+          </li>
+        </ul>
+        <p class="empty-list" *ngIf="ultimasInscripciones().length === 0">
+          No hay inscripciones registradas.
+        </p>
+      </section>
+    </div>
+  </section>
+</ng-container>
