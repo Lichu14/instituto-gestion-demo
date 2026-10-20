@@ -1,8 +1,9 @@
 <div class="login-container">
   <div class="login-card">
-    <span class="demo-label">DEMO PÚBLICA</span>
-    <h1>Instituto Gestión</h1>
-    <h2>Conocé el sistema por dentro</h2>
+    <div class="brand" translate="no"><img src="/brand/gestia-mark.svg" width="48" height="48" alt=""><span>Gestia</span></div>
+    <p class="brand-tagline">Tu academia, en orden.</p>
+    <span class="demo-label">Demo pública</span>
+    <h1>Conocé el gestor por dentro</h1>
     <p class="demo-intro">Alumnos, cursos y finanzas en un solo lugar. Explorá una academia con datos completamente ficticios.</p>
 
     <form (ngSubmit)="login()">
@@ -13,7 +14,7 @@
           id="email"
           name="email"
           [(ngModel)]="email"
-          placeholder="Ingresá tu email"
+          placeholder="Ingresá tu email" autocomplete="username" spellcheck="false"
           required
         />
       </div>
@@ -25,13 +26,13 @@
           id="password"
           name="password"
           [(ngModel)]="password"
-          placeholder="Ingresá tu contraseña"
+          placeholder="Ingresá tu contraseña" autocomplete="current-password"
           required
         />
       </div>
 
       <button type="submit" [disabled]="isLoading()">
-        {{ isLoading() ? 'Ingresando...' : 'Explorar demo' }}
+        {{ isLoading() ? 'Ingresando…' : 'Explorar demo' }}
       </button>
     </form>
 

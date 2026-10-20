@@ -16,7 +16,7 @@ form,
 
 dl {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: 0.25rem 1rem;
 }
 
@@ -26,4 +26,11 @@ dt {
 
 dd {
   margin: 0;
+}
+
+li { overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+  dl { grid-template-columns: minmax(0, 1fr); }
+  dd { margin-bottom: 0.5rem; }
 }

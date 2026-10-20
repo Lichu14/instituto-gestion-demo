@@ -24,13 +24,19 @@
       No hay profesoras activas.
     </p>
 
-    <ul>
-      <li *ngFor="let profesora of filteredProfesoras()">
-        <strong>{{ profesora.nombre }} {{ profesora.apellido }}</strong> -
-        DNI: {{ profesora.dni }} -
-        Tel: {{ profesora.telefono }}
-        <span class="badge estado-{{ profesora.estado }}">{{ profesora.estado }}</span>
-        <a [routerLink]="['/profesoras', profesora.id]">Ver detalle</a>
+    <ul class="teachers-list" aria-label="Listado de profesoras">
+      <li class="teacher-card" *ngFor="let profesora of filteredProfesoras()">
+        <div class="teacher-info">
+          <div class="teacher-heading">
+            <h3>{{ profesora.nombre }} {{ profesora.apellido }}</h3>
+            <span class="badge estado-{{ profesora.estado }}">{{ profesora.estado }}</span>
+          </div>
+          <dl class="teacher-contact">
+            <div><dt>DNI</dt><dd>{{ profesora.dni }}</dd></div>
+            <div><dt>Teléfono</dt><dd>{{ profesora.telefono || 'Sin teléfono' }}</dd></div>
+          </dl>
+        </div>
+        <a class="teacher-detail" [routerLink]="['/profesoras', profesora.id]">Ver detalle</a>
       </li>
     </ul>
   </ng-container>

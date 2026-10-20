@@ -12,7 +12,7 @@ form {
   position: relative;
   max-width: 26rem;
   margin-top: 0.75rem;
-  padding: 1.25rem;
+  padding: 3rem 1.25rem 1.25rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
@@ -21,6 +21,9 @@ form {
 
 .horario-form-wrapper form {
   margin-top: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
 }
 
 .close-button {
@@ -31,10 +34,13 @@ form {
   margin-right: 0;
   line-height: 1;
   font-size: 1.1rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
 }
 
 .alumno-inscripto {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
 }

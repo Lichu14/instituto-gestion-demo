@@ -22,31 +22,31 @@ import { Login } from './pages/login/login';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
+  { path: 'login', title: 'Explorar demo · Gestia Demo', component: Login },
   {
     path: '',
     component: MainLayout,
     canActivate: [authGuard],
     children: [
-      { path: '', component: Dashboard },
-      { path: 'alumnos', component: AlumnosList },
-      { path: 'alumnos/nueva', component: AlumnoCreate },
-      { path: 'alumnos/:id', component: AlumnoDetail },
-      { path: 'alumnos/:id/editar', component: AlumnoEdit },
-      { path: 'cursos', component: CursosList },
-      { path: 'cursos/nuevo', component: CursoCreate },
-      { path: 'cursos/:id', component: CursoDetail },
-      { path: 'inscripciones', component: InscripcionesList },
-      { path: 'inscripciones/nueva', component: InscripcionCreate },
-      { path: 'inscripciones/:id', component: InscripcionDetail },
-      { path: 'cuotas/:cuotaId/pago', component: PagoCreate },
-      { path: 'cuotas', component: CuotasList },
-      { path: 'pagos', component: PagosList },
-      { path: 'pagos/nuevo', component: PagoCreate },
-      { path: 'pagos/:id', component: PagoDetail },
-      { path: 'profesoras', component: ProfesorasList },
-      { path: 'profesoras/nueva', component: ProfesoraCreate },
-      { path: 'profesoras/:id', component: ProfesoraDetail }
+      { path: '', title: 'Inicio · Gestia Demo', component: Dashboard },
+      { path: 'alumnos', title: 'Alumnos · Gestia Demo', component: AlumnosList },
+      { path: 'alumnos/nueva', title: 'Crear alumno · Gestia Demo', component: AlumnoCreate },
+      { path: 'alumnos/:id', title: 'Alumno · Gestia Demo', component: AlumnoDetail },
+      { path: 'alumnos/:id/editar', title: 'Editar alumno · Gestia Demo', component: AlumnoEdit },
+      { path: 'cursos', title: 'Cursos · Gestia Demo', component: CursosList },
+      { path: 'cursos/nuevo', title: 'Crear curso · Gestia Demo', component: CursoCreate },
+      { path: 'cursos/:id', title: 'Curso · Gestia Demo', component: CursoDetail },
+      { path: 'inscripciones', title: 'Inscripciones · Gestia Demo', component: InscripcionesList },
+      { path: 'inscripciones/nueva', title: 'Crear inscripción · Gestia Demo', component: InscripcionCreate },
+      { path: 'inscripciones/:id', title: 'Inscripción · Gestia Demo', component: InscripcionDetail },
+      { path: 'cuotas/:cuotaId/pago', title: 'Registrar pago · Gestia Demo', component: PagoCreate },
+      { path: 'cuotas', title: 'Cuotas · Gestia Demo', component: CuotasList },
+      { path: 'pagos', title: 'Pagos · Gestia Demo', component: PagosList },
+      { path: 'pagos/nuevo', title: 'Registrar pago · Gestia Demo', component: PagoCreate },
+      { path: 'pagos/:id', title: 'Pago · Gestia Demo', component: PagoDetail },
+      { path: 'profesoras', title: 'Profesoras · Gestia Demo', component: ProfesorasList },
+      { path: 'profesoras/nueva', title: 'Crear profesora · Gestia Demo', component: ProfesoraCreate },
+      { path: 'profesoras/:id', title: 'Profesora · Gestia Demo', component: ProfesoraDetail }
     ]
   }
 ];

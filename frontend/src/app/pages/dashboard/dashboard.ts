@@ -15,6 +15,7 @@ import { PagoConDetalle } from '../../models/pago.model';
 import { FormatFechaPipe } from '../../shared/pipes/format-fecha.pipe';
 import { FormatMonedaPipe } from '../../shared/pipes/format-moneda.pipe';
 import { LoadingState } from '../../shared/loading-state/loading-state';
+import { Icon } from '../../shared/icon/icon';
 import { ErrorState } from '../../shared/error-state/error-state';
 import { agruparPagosPorCuota, esPeriodoActual, esDeudaActual } from '../../shared/utils/cuotas.utils';
 
@@ -26,7 +27,7 @@ import { agruparPagosPorCuota, esPeriodoActual, esDeudaActual } from '../../shar
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormatFechaPipe, FormatMonedaPipe, LoadingState, ErrorState],
+  imports: [CommonModule, RouterLink, FormatFechaPipe, FormatMonedaPipe, LoadingState, ErrorState, Icon],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

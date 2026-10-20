@@ -38,7 +38,7 @@ describe('Login feedback', () => {
     submit();
     await fixture.whenStable();
     expect(element.querySelector('button')!.disabled).toBe(true);
-    expect(element.querySelector('button')!.textContent).toContain('Ingresando...');
+    expect(element.querySelector('button')!.textContent).toContain('Ingresando…');
 
     first.error(new HttpErrorResponse({ status: 401 }));
     await fixture.whenStable();

@@ -1,28 +1,24 @@
 <div class="layout">
+  <a class="skip-link" href="#contenido" (click)="$event.preventDefault(); contenido.focus()">Saltar al contenido</a>
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <span class="sidebar-brand-mark">IG</span>
-      <h1 class="sidebar-title">Instituto Gestión</h1>
+      <img class="sidebar-brand-mark" src="/brand/gestia-mark-inverse.svg" width="42" height="42" alt="">
+      <div class="sidebar-brand-copy"><h1 class="sidebar-title" translate="no">Gestia</h1><p class="academia-nombre">Academia Horizonte · Demo</p></div>
     </div>
-
-    <nav class="sidebar-nav">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-        >Inicio</a
-      >
-      <a routerLink="/alumnos" routerLinkActive="active">Alumnos</a>
-      <a routerLink="/cursos" routerLinkActive="active">Cursos</a>
-      <a routerLink="/inscripciones" routerLinkActive="active">Inscripciones</a>
-      <a routerLink="/cuotas" routerLinkActive="active">Cuotas</a>
-      <a routerLink="/pagos" routerLinkActive="active">Pagos</a>
-      <a routerLink="/profesoras" routerLinkActive="active">Profesoras</a>
+    <nav class="sidebar-nav" aria-label="Navegación principal">
+      <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" [routerLinkActiveOptions]="{ exact: true }"><app-icon name="home" />Inicio</a>
+      <a routerLink="/alumnos" routerLinkActive="active" ariaCurrentWhenActive="page" ><app-icon name="users" />Alumnos</a>
+      <a routerLink="/cursos" routerLinkActive="active" ariaCurrentWhenActive="page" ><app-icon name="book" />Cursos</a>
+      <a routerLink="/inscripciones" routerLinkActive="active" ariaCurrentWhenActive="page" ><app-icon name="enrollment" />Inscripciones</a>
+      <a routerLink="/cuotas" routerLinkActive="active" ariaCurrentWhenActive="page" ><app-icon name="card" />Cuotas</a>
+      <a routerLink="/pagos" routerLinkActive="active" ariaCurrentWhenActive="page" ><app-icon name="money" />Pagos</a>
+      <a routerLink="/profesoras" routerLinkActive="active" ariaCurrentWhenActive="page" ><app-icon name="teacher" />Profesoras</a>
     </nav>
-    <button class="logout-button" (click)="logout()">Cerrar sesión</button>
+    <div class="sidebar-footer"><button class="logout-button" (click)="logout()"><app-icon name="logout" />Cerrar sesión</button></div>
   </aside>
-
-  <main class="content">
-    <div class="content-inner">
-      <aside class="demo-notice" aria-label="Información de la demo"><strong>Demo pública</strong><span>Datos ficticios · Solo lectura · Podés explorar y descargar PDFs.</span></aside>
-      <router-outlet />
-    </div>
-  </main>
+  <div class="mobile-academia" aria-label="Academia de demostración"><img class="mobile-academia-mark" src="/brand/gestia-mark.svg" width="26" height="26" alt="Gestia"><span>Academia Horizonte · Demo</span></div>
+  <main #contenido id="contenido" class="content" tabindex="-1"><div class="content-inner">
+    <aside class="demo-notice" aria-label="Información de la demo"><strong>Demo pública</strong><span>Datos ficticios · Solo lectura · Podés explorar y descargar PDFs.</span></aside>
+    <router-outlet />
+  </div></main>
 </div>

@@ -5,12 +5,13 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { Icon } from '../icon/icon';
 import { AuthService } from './../../services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, Icon],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
 })

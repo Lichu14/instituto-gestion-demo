@@ -23,7 +23,7 @@
 
 .enrollments-header h2 {
     margin: 0;
-    font-size: 2.25rem
+    font-size: 1.8rem
 }
 
 .enrollments-header p {
@@ -34,7 +34,7 @@
 
 .enrollments-tools {
     display: grid;
-    grid-template-columns: minmax(16rem, 1.25fr) auto;
+    grid-template-columns: minmax(0, 1.25fr) auto;
     align-items: end;
     gap: 1.25rem;
     margin-bottom: 1rem;
@@ -123,9 +123,7 @@
 .student strong,
 .student small {
     display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap
+    overflow-wrap: anywhere;
 }
 
 .student strong {
@@ -200,14 +198,15 @@
     margin: 1rem 0
 }
 
-@media(max-width:960px) {
+@media(max-width:1200px) {
+    .student { grid-column: 1; grid-row: 1; }
     .inscripcion {
-        grid-template-columns: minmax(14rem, 1.3fr) minmax(9rem, 1fr) auto auto
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto auto
     }
 
     .enrollment-info {
-        grid-column: 2/4;
-        grid-template-columns: repeat(2, max-content);
+        grid-column: 1/4;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 1.5rem
     }
 
@@ -217,6 +216,7 @@
     }
 
     .enrollment-course {
+        grid-column: 2;
         grid-row: 1
     }
 
@@ -238,7 +238,7 @@
     }
 
     .enrollments-header h2 {
-        font-size: 1.95rem
+        font-size: 1.55rem
     }
 
     .enrollments-header .new-link {
@@ -268,12 +268,13 @@
 
     .enrollment-course {
         grid-column: 1;
-        grid-row: auto
+        grid-row: 2
     }
 
     .estado {
         grid-column: 2;
-        grid-row: auto
+        grid-row: 2;
+        align-self: start
     }
 
     .enrollment-info {
@@ -292,4 +293,14 @@
         width: 2.25rem;
         height: 2.25rem
     }
+}
+.inscripcion > * { min-width: 0; }
+.enrollment-course strong { overflow-wrap: anywhere; }
+.enrollment-info { grid-template-columns: minmax(0, 1fr) auto; }
+.detail-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.25rem; }
+@media (max-width: 640px) {
+  .detail-link, .filter-check { min-height: 2.75rem; }
+}
+@media (min-width: 861px) and (max-width: 1050px) {
+  .enrollments-tools { grid-template-columns: minmax(0, 1fr); gap: .8rem; }
 }

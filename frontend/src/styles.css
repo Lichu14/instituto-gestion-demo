@@ -1,28 +1,45 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/dm-sans.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+}
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/newsreader.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
 
 :root {
-  --color-bg: #f5f3ee;
+  --color-bg: #f8f6f1;
   --color-surface: #ffffff;
   --color-surface-alt: #faf8f4;
-  --color-border: #e4e1d9;
-  --color-border-strong: #d2cec3;
-  --color-text: #292b28;
-  --color-text-muted: #666b63;
-  --color-text-soft: #8d9289;
+  --color-border: #dfe5de;
+  --color-border-strong: #7f8e83;
+  --color-text: #192b30;
+  --color-text-muted: #53665d;
+  --color-text-soft: #5b6b63;
 
-  --color-primary: #3f6659;
-  --color-primary-hover: #335447;
-  --color-primary-soft: #e6efec;
+  --color-primary: #245847;
+  --color-primary-hover: #1b4537;
+  --color-primary-soft: #e9f1eb;
   --color-primary-contrast: #ffffff;
 
-  --color-accent: #c17a4d;
-  --color-accent-soft: #f6e8db;
+  --color-accent: #75a28c;
+  --color-accent-on-brand: #bbd5c4;
+  --color-accent-soft: #e9f1eb;
+  --color-sidebar-hover: #306451;
+  --color-sidebar-active: #396f5a;
+  --color-on-brand: #f8f6f1;
+  --color-on-brand-muted: #dce9df;
 
-  --color-success: #2f7d52;
+  --color-success: #2b754c;
   --color-success-soft: #e5f3ea;
-  --color-warning: #b7791f;
+  --color-warning: #8a5b16;
   --color-warning-soft: #faf0dd;
   --color-danger: #b3261e;
   --color-danger-soft: #fbe9e7;
@@ -264,6 +281,8 @@ label {
 input,
 select,
 textarea {
+  min-width: 0;
+  max-width: 100%;
   font-family: inherit;
   font-size: 0.9rem;
   padding: 0.55rem 0.7rem;
@@ -323,7 +342,7 @@ input[type='search'],
 
 dl {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: 0.5rem 1.25rem;
   margin: 0 0 0.5rem;
 }
@@ -338,6 +357,8 @@ dt {
 }
 
 dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
   margin: 0;
   color: var(--color-text);
   align-self: center;
@@ -476,6 +497,7 @@ p.success {
 
 @media (max-width: 640px) {
   body { font-size: 14px; }
+  input, select, textarea { font-size: 1rem; }
   h2 { font-size: 1.55rem; }
   .page-header { align-items: flex-start; flex-direction: column; }
   .new-link { width: 100%; justify-content: center; }
@@ -483,6 +505,26 @@ p.success {
   dl { grid-template-columns: 1fr; gap: 0.1rem; }
   dd { margin-bottom: 0.5rem; }
   li > a, li > button { margin-left: 0.55rem; }
+}
+
+/* ---------- Keyboard, validation and reduced motion ---------- */
+
+:is(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+input::placeholder, textarea::placeholder { color: var(--color-text-soft); opacity: 1; }
+:is(input, select, textarea).ng-invalid.ng-touched { border-color: var(--color-danger); }
+body:has(app-confirm-dialog) { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ---------- Page header (title + primary action) ---------- */
