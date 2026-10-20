@@ -67,6 +67,32 @@
   </div>
 
   <div class="field">
+    <label for="mesInicio">Mes de inicio *</label>
+    <select
+      id="mesInicio"
+      formControlName="mesInicio"
+      required
+      [attr.aria-invalid]="form.controls.mesInicio.touched && form.controls.mesInicio.invalid"
+      [attr.aria-describedby]="form.controls.mesInicio.touched && form.controls.mesInicio.invalid ? 'mesInicio-ayuda mesInicio-error' : 'mesInicio-ayuda'"
+    >
+      <option [ngValue]="null" disabled>Seleccione un mes</option>
+      <option *ngFor="let mes of mesesInicio" [ngValue]="mes.valor">
+        {{ mes.nombre }}
+      </option>
+    </select>
+    <small id="mesInicio-ayuda">
+      Se generarán mensualidades desde el mes elegido hasta diciembre.
+    </small>
+    <small
+      id="mesInicio-error"
+      class="error"
+      *ngIf="form.controls.mesInicio.touched && form.controls.mesInicio.invalid"
+    >
+      Seleccione un mes entre marzo y diciembre.
+    </small>
+  </div>
+
+  <div class="field">
     <label for="descuentoPorcentaje">Descuento (%)</label>
     <input
       id="descuentoPorcentaje"

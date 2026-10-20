@@ -90,7 +90,15 @@ export class InscripcionesService {
 
       const montoMensual = Number(curso.precioMensual) * (1 - descuento / 100);
 
+      // Compatibilidad con clientes anteriores: solo la omisión equivale a marzo.
+      const mesInicio =
+        createInscripcionDto.mesInicio === undefined
+          ? 3
+          : createInscripcionDto.mesInicio;
+
       for (const mes of meses) {
+        // El DTO usa meses de calendario; Date.UTC usa índices desde cero.
+        if (mes.numero + 1 < mesInicio) continue;
         await tx.cuota.create({
           data: {
             inscripcionId: inscripcion.id,

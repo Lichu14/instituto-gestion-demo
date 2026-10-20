@@ -34,6 +34,19 @@ export class InscripcionCreate implements OnInit {
   submitError = signal('');
   successMessage = signal('');
 
+  readonly mesesInicio = [
+    { valor: 3, nombre: 'Marzo' },
+    { valor: 4, nombre: 'Abril' },
+    { valor: 5, nombre: 'Mayo' },
+    { valor: 6, nombre: 'Junio' },
+    { valor: 7, nombre: 'Julio' },
+    { valor: 8, nombre: 'Agosto' },
+    { valor: 9, nombre: 'Septiembre' },
+    { valor: 10, nombre: 'Octubre' },
+    { valor: 11, nombre: 'Noviembre' },
+    { valor: 12, nombre: 'Diciembre' }
+  ];
+
   // Campos según CreateInscripcionDto del backend.
   // Nota: el control se llama "anio" (no "año") porque el lexer de templates
   // de Angular solo admite identificadores ASCII; el payload sí usa "año".
@@ -44,6 +57,10 @@ export class InscripcionCreate implements OnInit {
       Validators.required,
       Validators.min(2000),
       Validators.max(2100)
+    ]),
+    mesInicio: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.pattern(/^(?:[3-9]|1[0-2])$/)
     ]),
     descuentoPorcentaje: new FormControl<number | null>(null, [
       Validators.min(0),
@@ -95,7 +112,8 @@ export class InscripcionCreate implements OnInit {
     const payload: CreateInscripcionRequest = {
       alumnoId: Number(raw.alumnoId),
       cursoId: Number(raw.cursoId),
-      año: Number(raw.anio)
+      año: Number(raw.anio),
+      mesInicio: Number(raw.mesInicio)
     };
 
     if (raw.descuentoPorcentaje !== null && raw.descuentoPorcentaje !== undefined) {

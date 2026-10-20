@@ -31,5 +31,6 @@ export interface CreateInscripcionRequest {
   alumnoId: number;
   cursoId: number;
   año: number;
+  mesInicio: number;
   descuentoPorcentaje?: number;
 }
